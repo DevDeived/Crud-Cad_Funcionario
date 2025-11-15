@@ -1,4 +1,3 @@
-// src/components/Form.js
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { QRCodeCanvas } from "qrcode.react";
@@ -7,9 +6,9 @@ import { toast } from "react-toastify";
 
 const formatDate = (isoDate) => {
   if (!isoDate) return "";
-  return isoDate.split("T")[0]; // remove horário
+  return isoDate.split("T")[0];
 };
-// === ESTILOS ===
+
 const FormContainer = styled.form`
   display: flex;
   flex-wrap: wrap;
@@ -28,7 +27,9 @@ const InputGroup = styled.div`
   flex-direction: column;
   flex: 1;
   min-width: 160px;
-  @media (max-width: 768px) { min-width: 140px; }
+  @media (max-width: 768px) {
+    min-width: 140px;
+  }
 `;
 
 const Label = styled.label`
@@ -118,10 +119,12 @@ const DownloadBtn = styled.button`
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  &:hover { background: #218838; }
+  &:hover {
+    background: #218838;
+  }
 `;
 
-// === FUNÇÃO PIX 100% CORRETA (PADRÃO BC) ===
+// FUNÇÃO PIX (PADRÃO BC)
 const pad2 = (n) => n.toString().padStart(2, "0");
 
 const buildField = (id, value = "") => {
@@ -144,8 +147,8 @@ const crc16 = (data) => {
 const cleanText = (text) => {
   if (!text) return "";
   return text
-    .replace(/[^\w\s]/g, "")  // Remove símbolos
-    .replace(/\s+/g, " ")     // Espaços múltiplos → 1
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, " ")
     .trim()
     .substring(0, 25);
 };
@@ -166,15 +169,14 @@ const generatePixPayload = ({ key, name, city, txid = "" }) => {
     buildField("58", "BR"),
     buildField("59", cleanName),
     buildField("60", cleanCity),
-    buildField("62", buildField("05", txid || "CAD000")), // OBRIGATÓRIO
+    buildField("62", buildField("05", txid || "CAD000")),
     "6304",
   ].join("");
 
   return payload + crc16(payload);
 };
 
-// === COMPONENTE FORM ===
-const Form = ({ onEdit, setOnEdit, getUsers }) => {
+const Form = ({ onEdit, setOnEdit, getUsers, refererId }) => {
   const [formData, setFormData] = useState({
     nome: "",
     beneficiario: "",
@@ -185,26 +187,29 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
   });
 
   useEffect(() => {
-  if (onEdit) {
-    setFormData({
-      nome: onEdit.nome || "",
-      beneficiario: onEdit.beneficiario || "",
-      cidade: onEdit.cidade || "",
-      fone: onEdit.fone || "",
-      data_nascimento: onEdit.data_nascimento ? formatDate(onEdit.data_nascimento) : "",
-      pix: onEdit.pix || "",
-    });
-  } else {
-    setFormData({
-      nome: "",
-      beneficiario: "",
-      cidade: "",
-      fone: "",
-      data_nascimento: "",
-      pix: "",
-    });
-  }
-}, [onEdit]);
+    if (onEdit) {
+      setFormData({
+        nome: onEdit.nome || "",
+        beneficiario: onEdit.beneficiario || "",
+        cidade: onEdit.cidade || "",
+        fone: onEdit.fone || "",
+        data_nascimento: onEdit.data_nascimento
+          ? formatDate(onEdit.data_nascimento)
+          : "",
+        pix: onEdit.pix || "",
+      });
+    } else {
+      setFormData({
+        nome: "",
+        beneficiario: "",
+        cidade: "",
+        fone: "",
+        data_nascimento: "",
+        pix: "",
+      });
+    }
+  }, [onEdit]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -220,6 +225,7 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
       fone: formData.fone.trim() || null,
       data_nascimento: formData.data_nascimento || null,
       pix: formData.pix.trim(),
+      referer_id: refererId, // ← AGORA DEFINIDO
     };
 
     if (!data.nome || !data.pix) {
@@ -236,7 +242,6 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
         toast.success("Cadastrado com sucesso!");
       }
 
-      // Limpa formulário
       setFormData({
         nome: "",
         beneficiario: "",
@@ -254,13 +259,13 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
   };
 
   const pixPayload = formData.pix
-  ? generatePixPayload({
-      key: formData.pix.trim(),
-      name: (formData.beneficiario || formData.nome || "").trim(),
-      city: (formData.cidade || "FORTALEZA").trim(),
-      txid: `CAD${Date.now().toString().slice(-6)}`,
-    })
-  : "";
+    ? generatePixPayload({
+        key: formData.pix.trim(),
+        name: (formData.beneficiario || formData.nome || "").trim(),
+        city: (formData.cidade || "FORTALEZA").trim(),
+        txid: `CAD${Date.now().toString().slice(-6)}`,
+      })
+    : "";
 
   const downloadQR = () => {
     const canvas = document.querySelector("canvas");
@@ -276,7 +281,6 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
   return (
     <>
       <FormContainer onSubmit={handleSubmit}>
-        {/* NOME */}
         <InputGroup>
           <Label>Nome</Label>
           <Input
@@ -288,7 +292,6 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
           />
         </InputGroup>
 
-        {/* BENEFICIÁRIO */}
         <InputGroup>
           <Label>Beneficiário (nome completo)</Label>
           <Input
@@ -299,7 +302,6 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
           />
         </InputGroup>
 
-        {/* CIDADE */}
         <InputGroup>
           <Label>Cidade</Label>
           <Input
@@ -310,7 +312,6 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
           />
         </InputGroup>
 
-        {/* TELEFONE */}
         <InputGroup>
           <Label>Telefone</Label>
           <Input
@@ -321,7 +322,6 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
           />
         </InputGroup>
 
-        {/* DATA NASCIMENTO */}
         <InputGroup>
           <Label>Data de Nascimento</Label>
           <Input
@@ -332,7 +332,6 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
           />
         </InputGroup>
 
-        {/* PIX */}
         <InputGroup>
           <Label>Pix (chave)</Label>
           <Input
@@ -344,18 +343,21 @@ const Form = ({ onEdit, setOnEdit, getUsers }) => {
           />
         </InputGroup>
 
-        {/* BOTÃO */}
         <SubmitButton type="submit">
           {onEdit ? "ATUALIZAR" : "SALVAR"}
         </SubmitButton>
       </FormContainer>
 
-      {/* QR CODE */}
       {formData.pix && pixPayload.startsWith("000201") && (
         <QRSection>
           <QRBox>
             <QRTitle>QR Code PIX</QRTitle>
-            <QRCodeCanvas value={pixPayload} size={160} level="M" includeMargin />
+            <QRCodeCanvas
+              value={pixPayload}
+              size={160}
+              level="M"
+              includeMargin
+            />
             <KeyText>{formData.pix}</KeyText>
             <DownloadBtn onClick={downloadQR}>Baixar PNG</DownloadBtn>
           </QRBox>

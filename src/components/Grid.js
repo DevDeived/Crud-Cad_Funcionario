@@ -1,4 +1,3 @@
-// src/components/Grid.js
 import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
@@ -6,7 +5,6 @@ import { FaTrash, FaEdit, FaQrcode } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
 
-// === ESTILOS ===
 const Container = styled.div`
   max-width: 1200px;
   margin: 40px auto;
@@ -82,7 +80,6 @@ const IconButton = styled.button`
   }
 `;
 
-// === MODAL DE QR CODE ===
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -171,7 +168,7 @@ const DownloadBtn = styled.button`
   }
 `;
 
-// === FUNÇÃO PIX (PADRÃO BC) ===
+// === FUNÇÃO PIX (PADRÃO BC)
 const pad2 = (n) => n.toString().padStart(2, "0");
 
 const buildField = (id, value = "") => {
@@ -194,8 +191,8 @@ const crc16 = (data) => {
 const cleanText = (text) => {
   if (!text) return "";
   return text
-    .replace(/[^\w\s]/g, "") 
-    .replace(/\s+/g, " ") 
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, " ")
     .trim()
     .substring(0, 25);
 };
@@ -216,14 +213,13 @@ const generatePixPayload = ({ key, name, city, txid = "" }) => {
     buildField("58", "BR"),
     buildField("59", cleanName),
     buildField("60", cleanCity),
-    buildField("62", buildField("05", txid || "CAD000")), // OBRIGATÓRIO
+    buildField("62", buildField("05", txid || "CAD000")),
     "6304",
   ].join("");
 
   return payload + crc16(payload);
 };
 
-//  COMPONENTE MODAL 
 const QRModal = ({ isOpen, onClose, user }) => {
   if (!isOpen || !user) return null;
 
@@ -272,7 +268,6 @@ const QRModal = ({ isOpen, onClose, user }) => {
   );
 };
 
-// === COMPONENTE GRID ===
 const Grid = ({ users, setUsers, setOnEdit }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -337,7 +332,6 @@ const Grid = ({ users, setUsers, setOnEdit }) => {
         </Tbody>
       </Table>
 
-      {/* MODAL DE QR CODE */}
       <QRModal
         isOpen={qrModalOpen}
         onClose={() => setQrModalOpen(false)}
