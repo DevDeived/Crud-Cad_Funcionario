@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { createGlobalStyle } from "styled-components";
 import styled from "styled-components";
 import Form from "./components/Form";
@@ -8,7 +8,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-// === ESTILOS GLOBAIS (apenas 1 vez) ===
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
@@ -29,6 +28,16 @@ const Container = styled.div`
   gap: 30px;
 `;
 
+const Header = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+`;
+
 const Title = styled.h2`
   width: 100%;
   max-width: 1200px;
@@ -43,45 +52,92 @@ const Title = styled.h2`
   letter-spacing: 1px;
 `;
 
+const SearchContainer = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  font-size: 15px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  background-color: #fafafa;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &:focus {
+    border-color: #2c73d2;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(44, 115, 210, 0.15);
+  }
+
+  &::placeholder {
+    color: #aaa;
+  }
+`;
+
+const SearchIcon = styled.span`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #2c73d2;
+  font-weight: bold;
+  pointer-events: none;
+`;
+
 function App() {
   const [users, setUsers] = useState([]);
   const [onEdit, setOnEdit] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // PESQUISA
 
-  const getUsers = async () => {
-    try {
-      const res = await axios.get("http://localhost:8800");
-      const sorted = res.data.sort((a, b) => a.nome.localeCompare(b.nome));
-      setUsers(sorted);
-    } catch (error) {
-      toast.error("Erro ao carregar funcionários.");
-      console.error("Erro:", error);
-    }
-  };
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8800";
+
+  const getUsers = useCallback(async () => {
+  try {
+    const res = await axios.get(API_URL);
+    const sorted = res.data.sort((a, b) => a.nome.localeCompare(b.nome));
+    setUsers(sorted);
+  } catch (error) {
+    toast.error("Erro ao carregar funcionários.");
+  }
+}, [API_URL]);
 
   useEffect(() => {
     getUsers();
-  }, []); // Correto: sem setUsers no array
+  }, [getUsers]);
+
+  const filteredUsers = users.filter(user =>
+    user.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <>
       <GlobalStyle />
       <Container>
-        <Title>CADASTRO DE FUNCIONÁRIOS</Title>
+        <Header>
+          <Title>CADASTRO DE FUNCIONÁRIOS</Title>
+          <SearchContainer>
+            <SearchInput
+              type="text"
+              placeholder="Pesquisar funcionário..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <SearchIcon>Search</SearchIcon>
+          </SearchContainer>
+        </Header>
 
         <Form onEdit={onEdit} setOnEdit={setOnEdit} getUsers={getUsers} />
 
-        <Grid users={users} setUsers={setUsers} setOnEdit={setOnEdit} />
+        <Grid users={filteredUsers} setUsers={setUsers} setOnEdit={setOnEdit} />
 
         <ToastContainer
           position="bottom-left"
           autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
           theme="colored"
         />
       </Container>

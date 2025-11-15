@@ -171,7 +171,7 @@ const DownloadBtn = styled.button`
   }
 `;
 
-// === FUNÇÃO PIX 100% CORRETA (PADRÃO BC) ===
+// === FUNÇÃO PIX (PADRÃO BC) ===
 const pad2 = (n) => n.toString().padStart(2, "0");
 
 const buildField = (id, value = "") => {
@@ -194,8 +194,8 @@ const crc16 = (data) => {
 const cleanText = (text) => {
   if (!text) return "";
   return text
-    .replace(/[^\w\s]/g, "") // Remove símbolos
-    .replace(/\s+/g, " ") // Espaços múltiplos → 1
+    .replace(/[^\w\s]/g, "") 
+    .replace(/\s+/g, " ") 
     .trim()
     .substring(0, 25);
 };
@@ -223,7 +223,7 @@ const generatePixPayload = ({ key, name, city, txid = "" }) => {
   return payload + crc16(payload);
 };
 
-// === COMPONENTE MODAL ===
+//  COMPONENTE MODAL 
 const QRModal = ({ isOpen, onClose, user }) => {
   if (!isOpen || !user) return null;
 
