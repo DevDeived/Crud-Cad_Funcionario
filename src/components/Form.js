@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://crud-cad-funcionario-api.on2render.com",
+  baseURL: "https://crud-cad-funcionario-api.onrender.com",
 });
 
 const formatDate = (isoDate) => {
