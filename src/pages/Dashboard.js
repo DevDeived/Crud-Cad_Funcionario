@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../config.api";
+import { toast } from "react-toastify";
 import Form from "../components/Form";
 import Grid from "../components/Grid";
 import styled from "styled-components";
@@ -95,14 +96,15 @@ const Dashboard = () => {
   const referer = JSON.parse(localStorage.getItem("referer"));
 
   const getUsers = useCallback(async () => {
-    if (!referer?.id) return;
-    try {
-      const res = await axios.get(`http://localhost:8800/users/${referer.id}`);
-      setUsers(res.data || []);
-    } catch (error) {
-      console.error("Erro ao carregar usuários:", error);
-    }
-  }, [referer?.id]);
+  if (!referer?.id) return;
+  try {
+    const res = await api.get(`/users/referer/${referer.id}`); // ← rota correta
+    setUsers(res.data || []);
+  } catch (error) {
+    console.error("Erro ao carregar usuários:", error);
+    toast.error("Erro ao carregar dados");
+  }
+}, [referer?.id]);
 
   useEffect(() => {
     if (!referer) {

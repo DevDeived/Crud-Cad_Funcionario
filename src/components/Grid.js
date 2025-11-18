@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import axios from "axios";
+import api from "../config.api";
 import { FaTrash, FaEdit, FaQrcode } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
@@ -277,16 +277,17 @@ const Grid = ({ users, setUsers, setOnEdit }) => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:8800/${id}`);
-      const newArray = users.filter((user) => user.id !== id);
-      setUsers(newArray);
-      toast.success("Excluído com sucesso!");
-    } catch (error) {
-      toast.error("Erro ao excluir.");
-    }
-    setOnEdit(null);
-  };
+  if (!window.confirm("Tem certeza que deseja excluir?")) return;
+
+  try {
+    await api.delete(`/users/${id}`); // ← rota correta
+    setUsers(users.filter((user) => user.id !== id));
+    toast.success("Excluído com sucesso!");
+  } catch (error) {
+    toast.error("Erro ao excluir");
+  }
+  setOnEdit(null);
+};
 
   return (
     <Container>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import axios from "axios";
+import api from "../config/api";
 import { useNavigate } from "react-router-dom";
 import md5 from "md5";
 
@@ -63,23 +63,23 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    try {
-      const res = await axios.get(`http://localhost:8800/referers/${email}`);
-      const user = res.data;
+  try {
+    const res = await api.get(`/referers/${email}`);
+    const user = res.data;
 
-      if (user && user.senha === md5(senha)) {
-        localStorage.setItem("referer", JSON.stringify(user));
-        navigate("/dashboard");
-      } else {
-        setError("Email ou senha incorretos");
-      }
-    } catch (err) {
-      setError("Erro ao fazer login");
+    if (user && user.senha === md5(senha)) {
+      localStorage.setItem("referer", JSON.stringify(user));
+      navigate("/dashboard");
+    } else {
+      setError("Email ou senha incorretos");
     }
-  };
+  } catch (err) {
+    setError("Erro ao fazer login. Verifique o email.");
+  }
+};
 
   return (
     <Container>

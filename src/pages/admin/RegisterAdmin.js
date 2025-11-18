@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../config/api";
 import md5 from "md5";
 import styled from "styled-components";
 
@@ -79,9 +79,9 @@ const RegisterAdmin = () => {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+  e.preventDefault();
+  setError("");
+  setSuccess("");
 
     if (!nome || !email || !senha || !confirmarSenha) {
       setError("Preencha todos os campos");
@@ -99,24 +99,19 @@ const RegisterAdmin = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:8800/referers", {
-        nome,
-        email,
-        senha: md5(senha),
-      });
+    const res = await api.post("/referers", { // ← rota correta
+      nome,
+      email,
+      senha: md5(senha),
+    });
 
-      const novoAdmin = res.data;
-
-      localStorage.setItem("referer", JSON.stringify(novoAdmin));
-      setSuccess("Administrador cadastrado com sucesso!");
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
-    } catch (err) {
-      setError("Erro ao cadastrar. Email já existe?");
-    }
-  };
+    localStorage.setItem("referer", JSON.stringify(res.data));
+    setSuccess("Administrador cadastrado com sucesso!");
+    setTimeout(() => navigate("/dashboard"), 1500);
+  } catch (err) {
+    setError(err.response?.data?.error || "Email já existe");
+  }
+};
 
   return (
     <Container>
