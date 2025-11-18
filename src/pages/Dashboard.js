@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "/src/config/api";
+import api from "@/lib/api";
 import { toast } from "react-toastify";
 import Form from "../components/Form";
 import Grid from "../components/Grid";
