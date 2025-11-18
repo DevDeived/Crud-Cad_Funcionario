@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { QRCodeCanvas } from "qrcode.react";
-import api from "@/config/api";
+import api from "/src/config/api";
 import { toast } from "react-toastify";
 
 const formatDate = (isoDate) => {

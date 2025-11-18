@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import api from "@/config/api";
+import api from "/src/config/api";
 import { useNavigate } from "react-router-dom";
 import md5 from "md5";
 
