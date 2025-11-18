@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import api from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import md5 from "md5";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://crud-cad-funcionario-api.on2render.com",
+});
 
 const Container = styled.div`
   display: flex;

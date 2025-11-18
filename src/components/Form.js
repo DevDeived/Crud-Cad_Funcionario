@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { QRCodeCanvas } from "qrcode.react";
-import api from "@/lib/api";
 import { toast } from "react-toastify";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://crud-cad-funcionario-api.on2render.com",
+});
 
 const formatDate = (isoDate) => {
   if (!isoDate) return "";

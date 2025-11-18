@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import api from "@/lib/api";
 import { FaTrash, FaEdit, FaQrcode } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://crud-cad-funcionario-api.on2render.com",
+});
 
 const Container = styled.div`
   max-width: 1200px;

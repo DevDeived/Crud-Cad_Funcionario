@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "@/lib/api";
 import { toast } from "react-toastify";
 import Form from "../components/Form";
 import Grid from "../components/Grid";
 import styled from "styled-components";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://crud-cad-funcionario-api.on2render.com",
+});
 
 const Container = styled.div`
   padding: 20px;
