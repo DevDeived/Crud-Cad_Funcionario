@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import api from "../config.api";
+import api from "../config/api";
 import { FaTrash, FaEdit, FaQrcode } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
