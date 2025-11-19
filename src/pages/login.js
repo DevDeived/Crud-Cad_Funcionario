@@ -65,7 +65,7 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await api.get(`/referers/${email}`);  // usa a baseURL correta automaticamente
+      const res = await api.get(`/referers/${email}?senha=${md5(senha)}`);  // usa a baseURL correta automaticamente
       const user = res.data;
 
       if (user && user.senha === md5(senha)) {
