@@ -3,11 +3,8 @@ import styled from "styled-components";
 import { FaTrash, FaEdit, FaQrcode } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
-import axios from "axios";
+import api from "../lib/api";
 
-const api = axios.create({
-  baseURL: "https://crud-cad-funcionario-api.onrender.com",
-});
 
 const Container = styled.div`
   max-width: 1200px;
@@ -281,17 +278,17 @@ const Grid = ({ users, setUsers, setOnEdit }) => {
   };
 
   const handleDelete = async (id) => {
-  if (!window.confirm("Tem certeza que deseja excluir?")) return;
+    if (!window.confirm("Tem certeza que deseja excluir?")) return;
 
-  try {
-    await api.delete(`/users/${id}`); // ← rota correta
-    setUsers(users.filter((user) => user.id !== id));
-    toast.success("Excluído com sucesso!");
-  } catch (error) {
-    toast.error("Erro ao excluir");
-  }
-  setOnEdit(null);
-};
+    try {
+      await api.delete(`/users/${id}`);
+      setUsers(users.filter((user) => user.id !== id));
+      toast.success("Excluído com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao excluir");
+    }
+    setOnEdit(null);
+  };
 
   return (
     <Container>

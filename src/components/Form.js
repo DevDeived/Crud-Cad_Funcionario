@@ -2,11 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { QRCodeCanvas } from "qrcode.react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../lib/api";
 
-const api = axios.create({
-  baseURL: "https://crud-cad-funcionario-api.onrender.com",
-});
 
 const formatDate = (isoDate) => {
   if (!isoDate) return "";
@@ -220,42 +217,40 @@ const Form = ({ onEdit, setOnEdit, getUsers, refererId }) => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const data = {
-    nome: formData.nome.trim(),
-    beneficiario: formData.beneficiario.trim() || formData.nome,
-    cidade: formData.cidade.trim() || "FORTALEZA",
-    fone: formData.fone.trim() || null,
-    data_nascimento: formData.data_nascimento || null,
-    pix: formData.pix.trim(),
-    refererId: refererId, // ← agora é refererId (Prisma)
-  };
+    const data = {
+      nome: formData.nome.trim(),
+      beneficiario: formData.beneficiario.trim() || formData.nome,
+      cidade: formData.cidade.trim() || "FORTALEZA",
+      fone: formData.fone.trim() || null,
+      data_nascimento: formData.data_nascimento || null,
+      pix: formData.pix.trim(),
+      refererId: refererId,
+    };
 
-  if (!data.nome || !data.pix) {
-    toast.error("Nome e Pix são obrigatórios!");
-    return;
-  }
-
-  try {
-    if (onEdit) {
-      await api.put(`/users/${onEdit.id}`, data); // ← rota correta
-      toast.success("Atualizado com sucesso!");
-    } else {
-      await api.post("/users", data); // ← rota correta
-      toast.success("Cadastrado com sucesso!");
+    if (!data.nome || !data.pix) {
+      toast.error("Nome e Pix são obrigatórios!");
+      return;
     }
 
-    setFormData({
-      nome: "", beneficiario: "", cidade: "", fone: "", data_nascimento: "", pix: "",
-    });
-    setOnEdit(null);
-    getUsers();
-  } catch (error) {
-    console.error("Erro ao salvar:", error.response?.data || error);
-    toast.error(error.response?.data?.error || "Erro ao salvar");
-  }
-};
+    try {
+      if (onEdit) {
+        await api.put(`/users/${onEdit.id}`, data);
+        toast.success("Atualizado com sucesso!");
+      } else {
+        await api.post("/users", data);
+        toast.success("Cadastrado com sucesso!");
+      }
+
+      setFormData({ nome: "", beneficiario: "", cidade: "", fone: "", data_nascimento: "", pix: "" });
+      setOnEdit(null);
+      getUsers();
+    } catch (error) {
+      console.error("Erro ao salvar:", error.response?.data || error);
+      toast.error(error.response?.data?.error || "Erro ao salvar");
+    }
+  };
 
   const pixPayload = formData.pix
     ? generatePixPayload({

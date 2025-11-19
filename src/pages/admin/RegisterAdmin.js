@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import md5 from "md5";
 import styled from "styled-components";
-import axios from "axios";
+import api from "../../lib/api";
 
-const api = axios.create({
-  baseURL: "https://crud-cad-funcionario-api.onrender.com",
-});
 
 const Container = styled.div`
   display: flex;
@@ -103,19 +100,19 @@ const RegisterAdmin = () => {
     }
 
     try {
-    const res = await api.post("/referers", { // ← rota correta
-      nome,
-      email,
-      senha: md5(senha),
-    });
+      const res = await api.post("/referers", {
+        nome,
+        email,
+        senha: md5(senha),
+      });
 
-    localStorage.setItem("referer", JSON.stringify(res.data));
-    setSuccess("Administrador cadastrado com sucesso!");
-    setTimeout(() => navigate("/dashboard"), 1500);
-  } catch (err) {
-    setError(err.response?.data?.error || "Email já existe");
-  }
-};
+      localStorage.setItem("referer", JSON.stringify(res.data));
+      setSuccess("Administrador cadastrado com sucesso!");
+      setTimeout(() => navigate("/dashboard"), 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || "Email já existe");
+    }
+  };
 
   return (
     <Container>

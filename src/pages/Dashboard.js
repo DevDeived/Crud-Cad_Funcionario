@@ -4,11 +4,8 @@ import { toast } from "react-toastify";
 import Form from "../components/Form";
 import Grid from "../components/Grid";
 import styled from "styled-components";
-import axios from "axios";
+import api from "../lib/api";
 
-const api = axios.create({
-  baseURL: "https://crud-cad-funcionario-api.onrender.com",
-});
 
 const Container = styled.div`
   padding: 20px;
@@ -100,15 +97,15 @@ const Dashboard = () => {
   const referer = JSON.parse(localStorage.getItem("referer"));
 
   const getUsers = useCallback(async () => {
-  if (!referer?.id) return;
-  try {
-    const res = await api.get(`/users/referer/${referer.id}`); // ← rota correta
-    setUsers(res.data || []);
-  } catch (error) {
-    console.error("Erro ao carregar usuários:", error);
-    toast.error("Erro ao carregar dados");
-  }
-}, [referer?.id]);
+    if (!referer?.id) return;
+    try {
+      const res = await api.get(`/users/referer/${referer.id}`);
+      setUsers(res.data || []);
+    } catch (error) {
+      console.error("Erro ao carregar usuários:", error);
+      toast.error("Erro ao carregar dados");
+    }
+  }, [referer?.id]);
 
   useEffect(() => {
     if (!referer) {

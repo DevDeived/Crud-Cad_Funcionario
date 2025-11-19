@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import md5 from "md5";
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "https://crud-cad-funcionario-api.onrender.com",
-});
+import api from "../lib/api";  // AQUI ESTÁ A CHAVE DO SUCESSO
 
 const Container = styled.div`
   display: flex;
@@ -55,9 +51,7 @@ const Button = styled.button`
   font-weight: 600;
   cursor: pointer;
   margin-top: 16px;
-  &:hover {
-    background: #1a5bb8;
-  }
+  &:hover { background: #1a5bb8; }
 `;
 
 const Login = () => {
@@ -71,7 +65,7 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await api.get(`/referers/${email}`);
+      const res = await api.get(`/referers/${email}`);  // usa a baseURL correta automaticamente
       const user = res.data;
 
       if (user && user.senha === md5(senha)) {
@@ -81,7 +75,8 @@ const Login = () => {
         setError("Email ou senha incorretos");
       }
     } catch (err) {
-      setError("Erro ao fazer login. Verifique o email.");
+      setError("Erro ao fazer login. Verifique o email ou a conexão.");
+      console.error(err);
     }
   };
 
