@@ -67,23 +67,23 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setError("");
+    e.preventDefault();
+    setError("");
 
-  try {
-    const res = await api.get(`/referers/${email}`);
-    const user = res.data;
+    try {
+      const res = await api.get(`/referers/${email}`);
+      const user = res.data;
 
-    if (user && user.senha === md5(senha)) {
-      localStorage.setItem("referer", JSON.stringify(user));
-      navigate("/dashboard");
-    } else {
-      setError("Email ou senha incorretos");
+      if (user && user.senha === md5(senha)) {
+        localStorage.setItem("referer", JSON.stringify(user));
+        navigate("/dashboard");
+      } else {
+        setError("Email ou senha incorretos");
+      }
+    } catch (err) {
+      setError("Erro ao fazer login. Verifique o email.");
     }
-  } catch (err) {
-    setError("Erro ao fazer login. Verifique o email.");
-  }
-};
+  };
 
   return (
     <Container>
