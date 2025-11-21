@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import md5 from "md5";
-import api from "../lib/api";  // AQUI ESTÁ A CHAVE DO SUCESSO
+import api from "../lib/api";
 
 const Container = styled.div`
   display: flex;
@@ -61,24 +61,26 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    try {
-      const res = await api.get(`/referers/${email}?senha=${md5(senha)}`);  // usa a baseURL correta automaticamente
-      const user = res.data;
+  try {
+    const res = await api.get(`/referers/${email}?senha=${md5(senha)}`);
+    const user = res.data;
 
-      if (user && user.senha === md5(senha)) {
-        localStorage.setItem("referer", JSON.stringify(user));
-        navigate("/dashboard");
-      } else {
-        setError("Email ou senha incorretos");
-      }
-    } catch (err) {
-      setError("Erro ao fazer login. Verifique o email ou a conexão.");
-      console.error(err);
+    // ✔ Login válido, pois o backend só devolve se estiver correto.
+    localStorage.setItem("referer", JSON.stringify(user));
+
+    navigate("/dashboard");
+  } catch (err) {
+    if (err.response?.status === 401) {
+      setError("Email ou senha incorretos");
+    } else {
+      setError("Erro ao conectar ao servidor.");
     }
-  };
+    console.error(err);
+  }
+};
 
   return (
     <Container>
