@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import md5 from "md5";
 import styled from "styled-components";
 import api from "../../lib/api";
-
 
 const Container = styled.div`
   display: flex;
@@ -68,6 +66,7 @@ const BackLink = styled.p`
   color: #2c73d2;
   cursor: pointer;
   font-weight: 600;
+  text-decoration: underline;
 `;
 
 const RegisterAdmin = () => {
@@ -80,9 +79,9 @@ const RegisterAdmin = () => {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-  e.preventDefault();
-  setError("");
-  setSuccess("");
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
     if (!nome || !email || !senha || !confirmarSenha) {
       setError("Preencha todos os campos");
@@ -94,23 +93,26 @@ const RegisterAdmin = () => {
       return;
     }
 
-    if (senha.length < 3) {
-      setError("A senha deve ter pelo menos 3 caracteres");
+    if (senha.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres");
       return;
     }
 
     try {
+      // NÃO FAZ md5 AQUI! O BACK-END JÁ FAZ!
       const res = await api.post("/referers", {
         nome,
-        email,
-        senha: md5(senha),
+        email: email.toLowerCase().trim(),
+        senha, // ← SENHA PURA
       });
 
+      // Loga automaticamente após cadastro
       localStorage.setItem("referer", JSON.stringify(res.data));
       setSuccess("Administrador cadastrado com sucesso!");
       setTimeout(() => navigate("/dashboard"), 1500);
     } catch (err) {
-      setError(err.response?.data?.error || "Email já existe");
+      const msg = err.response?.data?.error || "Erro ao cadastrar. Tente outro email.";
+      setError(msg);
     }
   };
 
@@ -124,35 +126,37 @@ const RegisterAdmin = () => {
             placeholder="Nome completo"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
+            required
           />
           <Input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <Input
             type="password"
-            placeholder="Senha"
+            placeholder="Senha (mín. 6 caracteres)"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
+            required
           />
           <Input
             type="password"
             placeholder="Confirmar Senha"
             value={confirmarSenha}
             onChange={(e) => setConfirmarSenha(e.target.value)}
+            required
           />
           <Button type="submit">Cadastrar Admin</Button>
 
-          {error && <p style={{ color: "red", marginTop: "12px" }}>{error}</p>}
-          {success && (
-            <p style={{ color: "green", marginTop: "12px" }}>{success}</p>
-          )}
+          {error && <p style={{ color: "red", marginTop: "12px", fontSize: "14px" }}>{error}</p>}
+          {success && <p style={{ color: "green", marginTop: "12px", fontWeight: "600" }}>{success}</p>}
         </form>
 
-        <BackLink onClick={() => navigate("/dashboard")}>
-          ← Voltar ao Dashboard
+        <BackLink onClick={() => navigate("/")}>
+          ← Voltar para Login
         </BackLink>
       </FormBox>
     </Container>
