@@ -19,9 +19,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -43,8 +43,5 @@
     ]
   },
   "proxy": "https://crud-cad-funcionario-api.onrender.com",
-  "devDependencies": {
-    "react-app-rewired": "^2.2.1",
-    "customize-cra": "^1.0.0"
-  }
+  "devDependencies": {}
 }
