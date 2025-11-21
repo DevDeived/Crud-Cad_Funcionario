@@ -65,13 +65,16 @@ const Login = () => {
   setError("");
 
   try {
-    const res = await api.get(`/referers/${email}?senha=${md5(senha)}`);
+    const res = await api.post("/referers/login", {
+      email,
+      senha, // envia plaintext, o backend faz o md5
+    });
+
     const user = res.data;
 
-    // ✔ Login válido, pois o backend só devolve se estiver correto.
     localStorage.setItem("referer", JSON.stringify(user));
-
     navigate("/dashboard");
+
   } catch (err) {
     if (err.response?.status === 401) {
       setError("Email ou senha incorretos");
