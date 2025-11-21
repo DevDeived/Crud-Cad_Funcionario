@@ -64,10 +64,9 @@ const Login = () => {
   setError("");
 
   try {
-    const res = await api.post("/referers/login", {
-      email,
-      senha, // envia plaintext, o backend faz o md5
-    });
+    const res = await api.post("/referers/login", { email, senha });
+localStorage.setItem("referer", JSON.stringify(res.data));
+navigate("/dashboard");
 
     const user = res.data;
 
